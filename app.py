@@ -1,10 +1,10 @@
 from db_manager import load_csv_to_db, run_sql_query
-from llm_utils import mock_generate_sql
+from llm_utils import generate_sql
 
 print("AI Spreadsheet Assistant")
 print("Type commands like:")
 print("- load example.csv")
-print("- show me top revenue")
+print("- Ask any question about the data")
 print("- exit")
 
 while True:
@@ -19,7 +19,8 @@ while True:
         load_csv_to_db(csv_path)
 
     else:
-        sql = mock_generate_sql(user_input)
+        schema = "id, name, region, revenue"
+        sql = generate_sql(user_input, schema)
         print(f"[Generated SQL]: {sql}")
         result = run_sql_query(sql)
         print(result)
