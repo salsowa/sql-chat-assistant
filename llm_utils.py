@@ -1,25 +1,35 @@
 import openai
 import os
 
-# Set your API key here (recommended to use environment variable)
-openai.api_key = os.getenv("OPENAI_API_KEY")
+def generate_sql_with_explanation(user_input, schema_description):
+    openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Optionally, hardcode your key directly for testing (not recommended for public repos)
-# openai.api_key = "sk-..."
-
-def generate_sql(user_input, schema):
     prompt = f"""
-You are a helpful assistant that converts natural language questions into SQL queries.
-Here is the table schema:
-{schema}
+You are an AI assistant tasked with converting user queries into SQL statements.
+The database uses SQLite and contains the following schema:
 
-User question: {user_input}
-SQL query:
+{schema_description}
+
+User Query:
+"{user_input}"
+
+Your task is to:
+1. Generate a SQL query that accurately answers the user's question.
+2. Ensure the SQL is compatible with SQLite syntax.
+3. Provide a short comment explaining what the query does.
+
+Output Format:
+-- SQL Query:
+<your query>
+
+-- Explanation:
+<your explanation>
 """
+
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
-        temperature=0,
-        max_tokens=100,
+        temperature=0
     )
-    return response["choices"][0]["message"]["content"].strip()
+
+    return response['choices'][0]['message']['content'].strip()
